@@ -25,12 +25,14 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          if [ -f ${{ matrix.service }}/requirements.txt ]; then pip install -r ${{ matrix.service }}/requirements.txt; fi
+          if [ -d "${{ github.workspace }}/${{ matrix.service }}" ]; then
+            pip install -r "${{ github.workspace }}/${{ matrix.service }}/requirements.txt"
+          fi
           pip install pytest
 
       - name: Run tests
-        working-directory: ${{ matrix.service }}
         run: |
+          cd "${{ github.workspace }}/${{ matrix.service }}"
           if [ "${{ matrix.service }}" = "order_service" ]; then
             pytest tests/ --ignore=tests/test_forecast.py -v
           else
@@ -49,8 +51,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Simulate Build and DevSecOps Check
+      - name: Simulate Build
         run: |
-          echo "Bygger Docker-images virtuelt til produktion..."
-          echo "Verificerer adgang via hemmeligheder..."
-          echo "DB_PASSWORD er sikkert indsprøjtet fra GitHub Secrets."
+          echo "Bygger Docker-images..."
