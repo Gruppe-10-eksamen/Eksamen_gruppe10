@@ -2,23 +2,15 @@
   "title": "Arla RoW DS — Order Processing Observability",
   "uid": "arla-row-ds-dashboard",
   "schemaVersion": 36,
-  "version": 1,
+  "version": 2,
   "refresh": "10s",
-  "time": {
-    "from": "now-15m",
-    "to": "now"
-  },
+  "time": { "from": "now-15m", "to": "now" },
   "panels": [
     {
       "id": 1,
       "title": "HTTP requests per sekund (alle endpoints)",
       "type": "timeseries",
-      "gridPos": {
-        "x": 0,
-        "y": 0,
-        "w": 12,
-        "h": 8
-      },
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
       "datasource": "Prometheus",
       "targets": [
         {
@@ -31,78 +23,60 @@
       "id": 2,
       "title": "HTTP request latency p95 (sekunder)",
       "type": "timeseries",
-      "gridPos": {
-        "x": 12,
-        "y": 0,
-        "w": 12,
-        "h": 8
-      },
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
       "datasource": "Prometheus",
       "targets": [
         {
           "expr": "histogram_quantile(0.95, rate(http_request_duration_highr_seconds_bucket[1m]))",
-          "legendFormat": "p95 latency"
+          "legendFormat": "p95 {{handler}}"
         }
       ]
     },
     {
       "id": 3,
-      "title": "Ordrer modtaget (total)",
+      "title": "POST /orders — requests total",
       "type": "stat",
-      "gridPos": {
-        "x": 0,
-        "y": 8,
-        "w": 6,
-        "h": 4
-      },
+      "gridPos": { "x": 0, "y": 8, "w": 6, "h": 4 },
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "arla_orders_received_total",
-          "legendFormat": "Modtaget"
+          "expr": "sum(http_requests_total{handler=\"/orders\", method=\"POST\"})",
+          "legendFormat": "Ordrer modtaget"
         }
       ],
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none"
-      }
+      "options": { "colorMode": "background", "graphMode": "none" }
     },
     {
       "id": 4,
-      "title": "Ordrer valideret (total)",
+      "title": "POST /orders — 2xx (success)",
       "type": "stat",
-      "gridPos": {
-        "x": 6,
-        "y": 8,
-        "w": 6,
-        "h": 4
-      },
+      "gridPos": { "x": 6, "y": 8, "w": 6, "h": 4 },
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "arla_orders_validated_total",
-          "legendFormat": "Valideret"
+          "expr": "sum(http_requests_total{handler=\"/orders\", method=\"POST\", status_code=~\"2..\"})",
+          "legendFormat": "Valideret / oprettet"
         }
       ],
       "options": {
         "colorMode": "background",
-        "graphMode": "none"
+        "graphMode": "none",
+        "thresholds": {
+          "steps": [
+            { "color": "green", "value": null }
+          ]
+        }
       }
     },
     {
       "id": 5,
-      "title": "Ordrer afvist (total)",
+      "title": "POST /orders — 4xx (afvist)",
       "type": "stat",
-      "gridPos": {
-        "x": 12,
-        "y": 8,
-        "w": 6,
-        "h": 4
-      },
+      "gridPos": { "x": 12, "y": 8, "w": 6, "h": 4 },
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "arla_orders_rejected_total",
+          "expr": "sum(http_requests_total{handler=\"/orders\", method=\"POST\", status_code=~\"4..\"})",
           "legendFormat": "Afvist"
         }
       ],
@@ -111,136 +85,66 @@
         "graphMode": "none",
         "thresholds": {
           "steps": [
-            {
-              "color": "green",
-              "value": null
-            },
-            {
-              "color": "orange",
-              "value": 5
-            },
-            {
-              "color": "red",
-              "value": 20
-            }
+            { "color": "green", "value": null },
+            { "color": "orange", "value": 5 },
+            { "color": "red", "value": 20 }
           ]
         }
       }
     },
     {
       "id": 6,
-      "title": "Ordrer til manuel review (pending)",
+      "title": "GET /contracts — requests total",
       "type": "stat",
-      "gridPos": {
-        "x": 18,
-        "y": 8,
-        "w": 6,
-        "h": 4
-      },
+      "gridPos": { "x": 18, "y": 8, "w": 6, "h": 4 },
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "arla_orders_pending_review",
-          "legendFormat": "Pending review"
+          "expr": "sum(http_requests_total{handler=~\"/contracts.*\", method=\"GET\"})",
+          "legendFormat": "Contract lookups"
         }
       ],
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "thresholds": {
-          "steps": [
-            {
-              "color": "green",
-              "value": null
-            },
-            {
-              "color": "orange",
-              "value": 10
-            },
-            {
-              "color": "red",
-              "value": 50
-            }
-          ]
-        }
-      }
+      "options": { "colorMode": "background", "graphMode": "none" }
     },
     {
       "id": 7,
-      "title": "Ordreflow over tid (modtaget / valideret / afvist)",
+      "title": "Ordreflow over tid — POST /orders (2xx vs 4xx)",
       "type": "timeseries",
-      "gridPos": {
-        "x": 0,
-        "y": 12,
-        "w": 24,
-        "h": 8
-      },
+      "gridPos": { "x": 0, "y": 12, "w": 24, "h": 8 },
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "rate(arla_orders_received_total[1m])",
-          "legendFormat": "Modtaget/sek"
+          "expr": "rate(http_requests_total{handler=\"/orders\", method=\"POST\", status_code=~\"2..\"}[1m])",
+          "legendFormat": "Oprettet (2xx)/sek"
         },
         {
-          "expr": "rate(arla_orders_validated_total[1m])",
-          "legendFormat": "Valideret/sek"
+          "expr": "rate(http_requests_total{handler=\"/orders\", method=\"POST\", status_code=~\"4..\"}[1m])",
+          "legendFormat": "Afvist (4xx)/sek"
         },
         {
-          "expr": "rate(arla_orders_rejected_total[1m])",
-          "legendFormat": "Afvist/sek"
+          "expr": "rate(http_requests_total{handler=\"/orders\", method=\"POST\"}[1m])",
+          "legendFormat": "Total/sek"
         }
       ]
     },
     {
       "id": 8,
-      "title": "Ordrer per kanal (email / whatsapp / excel / teams)",
+      "title": "Requests fordelt på endpoints (pie)",
       "type": "piechart",
-      "gridPos": {
-        "x": 0,
-        "y": 20,
-        "w": 12,
-        "h": 8
-      },
+      "gridPos": { "x": 0, "y": 20, "w": 12, "h": 8 },
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "arla_orders_received_total",
-          "legendFormat": "{{channel}}"
+          "expr": "sum by (handler) (http_requests_total)",
+          "legendFormat": "{{handler}}"
         }
       ]
     },
     {
       "id": 9,
-      "title": "Confidence score fordeling (histogram)",
+      "title": "HTTP fejlrate (4xx + 5xx) per endpoint",
       "type": "timeseries",
-      "gridPos": {
-        "x": 12,
-        "y": 20,
-        "w": 12,
-        "h": 8
-      },
-      "datasource": "Prometheus",
-      "targets": [
-        {
-          "expr": "histogram_quantile(0.50, rate(arla_order_confidence_score_bucket[1m]))",
-          "legendFormat": "p50 confidence"
-        },
-        {
-          "expr": "histogram_quantile(0.95, rate(arla_order_confidence_score_bucket[1m]))",
-          "legendFormat": "p95 confidence"
-        }
-      ]
-    },
-    {
-      "id": 10,
-      "title": "HTTP fejlrate (4xx + 5xx)",
-      "type": "timeseries",
-      "gridPos": {
-        "x": 0,
-        "y": 28,
-        "w": 12,
-        "h": 8
-      },
+      "gridPos": { "x": 12, "y": 20, "w": 12, "h": 8 },
       "datasource": "Prometheus",
       "targets": [
         {
@@ -250,87 +154,10 @@
       ]
     },
     {
-      "id": 11,
-      "title": "Database fejl (total)",
-      "type": "stat",
-      "gridPos": {
-        "x": 12,
-        "y": 28,
-        "w": 6,
-        "h": 4
-      },
-      "datasource": "Prometheus",
-      "targets": [
-        {
-          "expr": "arla_db_errors_total",
-          "legendFormat": "DB fejl"
-        }
-      ],
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "thresholds": {
-          "steps": [
-            {
-              "color": "green",
-              "value": null
-            },
-            {
-              "color": "red",
-              "value": 1
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": 12,
-      "title": "Validering fejlet (BusinessRuleViolation)",
-      "type": "stat",
-      "gridPos": {
-        "x": 18,
-        "y": 28,
-        "w": 6,
-        "h": 4
-      },
-      "datasource": "Prometheus",
-      "targets": [
-        {
-          "expr": "arla_validation_errors_total",
-          "legendFormat": "Valideringsfejl"
-        }
-      ],
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "thresholds": {
-          "steps": [
-            {
-              "color": "green",
-              "value": null
-            },
-            {
-              "color": "orange",
-              "value": 5
-            },
-            {
-              "color": "red",
-              "value": 25
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": 13,
+      "id": 10,
       "title": "PostgreSQL — aktive forbindelser",
       "type": "timeseries",
-      "gridPos": {
-        "x": 0,
-        "y": 36,
-        "w": 12,
-        "h": 8
-      },
+      "gridPos": { "x": 0, "y": 28, "w": 12, "h": 8 },
       "datasource": "Prometheus",
       "targets": [
         {
@@ -340,28 +167,19 @@
       ]
     },
     {
-      "id": 14,
-      "title": "PostgreSQL — INSERT/UPDATE/DELETE per sekund",
+      "id": 11,
+      "title": "PostgreSQL — inserts per sekund",
       "type": "timeseries",
-      "gridPos": {
-        "x": 12,
-        "y": 36,
-        "w": 12,
-        "h": 8
-      },
+      "gridPos": { "x": 12, "y": 28, "w": 12, "h": 8 },
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "rate(pg_stat_database_tup_inserted{datname=\"arla_orders\"}[1m])",
+          "expr": "rate(pg_stat_database_tup_inserted{datname=\"arla_row\"}[1m])",
           "legendFormat": "Inserts/sek"
         },
         {
-          "expr": "rate(pg_stat_database_tup_updated{datname=\"arla_orders\"}[1m])",
+          "expr": "rate(pg_stat_database_tup_updated{datname=\"arla_row\"}[1m])",
           "legendFormat": "Updates/sek"
-        },
-        {
-          "expr": "rate(pg_stat_database_tup_deleted{datname=\"arla_orders\"}[1m])",
-          "legendFormat": "Deletes/sek"
         }
       ]
     }
