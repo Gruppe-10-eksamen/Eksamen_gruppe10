@@ -1,0 +1,369 @@
+{
+  "title": "Arla RoW DS — Order Processing Observability",
+  "uid": "arla-row-ds-dashboard",
+  "schemaVersion": 36,
+  "version": 1,
+  "refresh": "10s",
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "HTTP requests per sekund (alle endpoints)",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "rate(http_requests_total[1m])",
+          "legendFormat": "{{method}} {{handler}} {{status_code}}"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "HTTP request latency p95 (sekunder)",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, rate(http_request_duration_highr_seconds_bucket[1m]))",
+          "legendFormat": "p95 latency"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Ordrer modtaget (total)",
+      "type": "stat",
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 6,
+        "h": 4
+      },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "arla_orders_received_total",
+          "legendFormat": "Modtaget"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none"
+      }
+    },
+    {
+      "id": 4,
+      "title": "Ordrer valideret (total)",
+      "type": "stat",
+      "gridPos": {
+        "x": 6,
+        "y": 8,
+        "w": 6,
+        "h": 4
+      },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "arla_orders_validated_total",
+          "legendFormat": "Valideret"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none"
+      }
+    },
+    {
+      "id": 5,
+      "title": "Ordrer afvist (total)",
+      "type": "stat",
+      "gridPos": {
+        "x": 12,
+        "y": 8,
+        "w": 6,
+        "h": 4
+      },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "arla_orders_rejected_total",
+          "legendFormat": "Afvist"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "thresholds": {
+          "steps": [
+            {
+              "color": "green",
+              "value": null
+            },
+            {
+              "color": "orange",
+              "value": 5
+            },
+            {
+              "color": "red",
+              "value": 20
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 6,
+      "title": "Ordrer til manuel review (pending)",
+      "type": "stat",
+      "gridPos": {
+        "x": 18,
+        "y": 8,
+        "w": 6,
+        "h": 4
+      },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "arla_orders_pending_review",
+          "legendFormat": "Pending review"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "thresholds": {
+          "steps": [
+            {
+              "color": "green",
+              "value": null
+            },
+            {
+              "color": "orange",
+              "value": 10
+            },
+            {
+              "color": "red",
+              "value": 50
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 7,
+      "title": "Ordreflow over tid (modtaget / valideret / afvist)",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 12,
+        "w": 24,
+        "h": 8
+      },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "rate(arla_orders_received_total[1m])",
+          "legendFormat": "Modtaget/sek"
+        },
+        {
+          "expr": "rate(arla_orders_validated_total[1m])",
+          "legendFormat": "Valideret/sek"
+        },
+        {
+          "expr": "rate(arla_orders_rejected_total[1m])",
+          "legendFormat": "Afvist/sek"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Ordrer per kanal (email / whatsapp / excel / teams)",
+      "type": "piechart",
+      "gridPos": {
+        "x": 0,
+        "y": 20,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "arla_orders_received_total",
+          "legendFormat": "{{channel}}"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Confidence score fordeling (histogram)",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 12,
+        "y": 20,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, rate(arla_order_confidence_score_bucket[1m]))",
+          "legendFormat": "p50 confidence"
+        },
+        {
+          "expr": "histogram_quantile(0.95, rate(arla_order_confidence_score_bucket[1m]))",
+          "legendFormat": "p95 confidence"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "title": "HTTP fejlrate (4xx + 5xx)",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 28,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "rate(http_requests_total{status_code=~\"4..|5..\"}[1m])",
+          "legendFormat": "{{status_code}} {{handler}}"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "title": "Database fejl (total)",
+      "type": "stat",
+      "gridPos": {
+        "x": 12,
+        "y": 28,
+        "w": 6,
+        "h": 4
+      },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "arla_db_errors_total",
+          "legendFormat": "DB fejl"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "thresholds": {
+          "steps": [
+            {
+              "color": "green",
+              "value": null
+            },
+            {
+              "color": "red",
+              "value": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 12,
+      "title": "Validering fejlet (BusinessRuleViolation)",
+      "type": "stat",
+      "gridPos": {
+        "x": 18,
+        "y": 28,
+        "w": 6,
+        "h": 4
+      },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "arla_validation_errors_total",
+          "legendFormat": "Valideringsfejl"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "thresholds": {
+          "steps": [
+            {
+              "color": "green",
+              "value": null
+            },
+            {
+              "color": "orange",
+              "value": 5
+            },
+            {
+              "color": "red",
+              "value": 25
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 13,
+      "title": "PostgreSQL — aktive forbindelser",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 36,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "pg_stat_activity_count{state=\"active\"}",
+          "legendFormat": "Aktive forbindelser"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "title": "PostgreSQL — INSERT/UPDATE/DELETE per sekund",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 12,
+        "y": 36,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "rate(pg_stat_database_tup_inserted{datname=\"arla_orders\"}[1m])",
+          "legendFormat": "Inserts/sek"
+        },
+        {
+          "expr": "rate(pg_stat_database_tup_updated{datname=\"arla_orders\"}[1m])",
+          "legendFormat": "Updates/sek"
+        },
+        {
+          "expr": "rate(pg_stat_database_tup_deleted{datname=\"arla_orders\"}[1m])",
+          "legendFormat": "Deletes/sek"
+        }
+      ]
+    }
+  ]
+}

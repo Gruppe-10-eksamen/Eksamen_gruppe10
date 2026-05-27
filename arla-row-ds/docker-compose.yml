@@ -1,8 +1,19 @@
-# Orkestrerer hele løsningen lokalt: to services + PostgreSQL.
+# Orkestrerer hele løsningen lokalt: services + PostgreSQL + observability stack.
 # Kør med:  docker-compose up --build
+#
+# Tilgængelige endpoints:
+#   Order Service:    http://localhost:8000
+#   Contract Service: http://localhost:8001
+#   Grafana:          http://localhost:3000  (admin / admin)
+#   Prometheus:       http://localhost:9090
+#   PG Exporter:      http://localhost:9187/metrics
+
 services:
+
+  # ── 1. PostgreSQL ─────────────────────────────────────────
   postgres:
     image: postgres:16
+    container_name: arla-db
     environment:
       POSTGRES_DB: arla_row
       POSTGRES_USER: arla
@@ -16,9 +27,13 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
+    networks:
+      - arla-net
 
+  # ── 2. Contract Service ───────────────────────────────────
   contract-service:
     build: ./contract_service
+    container_name: arla-contract-service
     ports:
       - "8001:8001"
     environment:
@@ -27,9 +42,13 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    networks:
+      - arla-net
 
+  # ── 3. Order Service ──────────────────────────────────────
   order-service:
     build: ./order_service
+    container_name: arla-order-service
     ports:
       - "8000:8000"
     environment:
@@ -42,6 +61,59 @@ services:
         condition: service_healthy
       contract-service:
         condition: service_started
+    networks:
+      - arla-net
+
+  # ── 4. PostgreSQL Exporter (metrics → Prometheus) ─────────
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: arla-postgres-exporter
+    environment:
+      DATA_SOURCE_NAME: "postgresql://arla:${DB_PASSWORD:-arla}@postgres:5432/arla_row?sslmode=disable"
+    ports:
+      - "9187:9187"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - arla-net
+
+  # ── 5. Prometheus (scraper metrics fra alle services) ─────
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: arla-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - order-service
+      - contract-service
+      - postgres-exporter
+    networks:
+      - arla-net
+
+  # ── 6. Grafana (visualiserer metrics fra Prometheus) ──────
+  grafana:
+    image: grafana/grafana:latest
+    container_name: arla-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    depends_on:
+      - prometheus
+    networks:
+      - arla-net
 
 volumes:
   pgdata:
+
+networks:
+  arla-net:
+    driver: bridge

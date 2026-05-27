@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: "Arla RoW DS Dashboards"
+    orgId: 1
+    folder: "Arla"
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /var/lib/grafana/dashboards
