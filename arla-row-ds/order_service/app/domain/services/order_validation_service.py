@@ -1,15 +1,7 @@
 """
-Domain Service: OrderValidationService
-
-En domain service indeholder domænelogik der involverer flere objekter og ikke
-naturligt hører hjemme i ét aggregat. Validering af en ordre kræver opslag i
-distributøraftalen (et andet bounded context) — derfor er det en service, ikke
-en metode på Order.
-
-Servicen bruger ContractClient (ACL) til at tjekke hver ordrelinje mod aftalen.
-Den anvender domænereglerne og kalder order.validate() eller order.reject().
-
-Dette er det centrale forretningsflow i hele løsningen.
+Domain Service: OrderValidationService.
+Validerer en ordre mod distributøraftalen via ContractClient (ACL).
+Kalder order.validate() eller order.reject() baseret på valideringsresultatet.
 """
 import logging
 

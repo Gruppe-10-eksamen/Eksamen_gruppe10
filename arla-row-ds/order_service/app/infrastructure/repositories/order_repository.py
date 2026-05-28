@@ -1,9 +1,5 @@
 """
-Repository: OrderRepository
-
-Oversætter mellem Order-aggregatet og ORM-modellerne, og persisterer ordrer
-til PostgreSQL. Som i Contract Service er dette eneste sted hvor domæne <-> ORM
-oversættelsen sker.
+Repository: OrderRepository. Persisterer Order-aggregatet til PostgreSQL via SQLAlchemy.
 """
 from sqlalchemy.orm import Session
 

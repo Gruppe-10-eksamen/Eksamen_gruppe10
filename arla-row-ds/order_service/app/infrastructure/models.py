@@ -1,8 +1,5 @@
 """
-ORM-modeller for Order Service. Afspejler domænemodellen:
-  orders        <- Order (aggregate root)
-  order_lines   <- OrderLine (entity)
-Value objects (status, channel) lagres som kolonner.
+ORM-modeller for Order Service. orders → Order, order_lines → OrderLine.
 """
 from datetime import date
 
