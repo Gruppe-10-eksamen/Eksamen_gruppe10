@@ -1,9 +1,5 @@
 """
-Entity: Distributor
-
-En ekstern handelspartner der køber og videredistribuerer Arlas produkter på
-et givent marked. Distributoren har identitet (distributor_id) og spores
-over tid — kontaktoplysninger kan ændre sig, men det er stadig samme distributør.
+Entity: Distributor. Ekstern handelspartner med unik identitet (distributor_id).
 """
 from dataclasses import dataclass
 
