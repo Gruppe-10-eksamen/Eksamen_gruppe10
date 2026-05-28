@@ -1,12 +1,5 @@
 """
-Entity: ContractLine
-
-En entity har identitet og livscyklus — den spores via et ID og kan ændre sig
-over tid uden at holde op med at være "den samme". En ContractLine repræsenterer
-ét produkt i en distributøraftale med tilhørende aftalt pris.
-
-Modsætningen til et value object: to ContractLines med samme produktkode men
-forskellige ID'er er IKKE den samme linje.
+Entity: ContractLine. Ét produkt i en distributøraftale med aftalt pris. Identitet via contract_line_id.
 """
 from dataclasses import dataclass
 

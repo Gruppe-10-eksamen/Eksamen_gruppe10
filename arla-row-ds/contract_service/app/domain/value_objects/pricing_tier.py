@@ -1,9 +1,5 @@
 """
-Value Object: PricingTier
-
-Det aftalte prisniveau for en distributør. Prisniveauet afhænger typisk af
-volumen og markedsklassifikation. Som value object er det uforanderligt —
-ændres prisniveauet, oprettes et nyt PricingTier frem for at mutere det gamle.
+Value Object: PricingTier. Aftalt prisniveau og rabat for en distributør.
 """
 from dataclasses import dataclass
 from enum import Enum

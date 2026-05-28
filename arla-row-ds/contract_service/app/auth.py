@@ -1,11 +1,5 @@
 """
-Simpel API-nøgle-autentificering. Klienten skal sende headeren:
-    X-API-Key: <nøgle>
-Nøglen sammenlignes med den konfigurerede API_KEY. I produktion kommer
-nøglen fra et secret, aldrig fra koden.
-
-Dette er bevidst simpelt for en MVP. I rapporten kan I beskrive at en
-produktionsløsning ville bruge OAuth2/JWT via Azure AD i stedet.
+API-nøgle autentificering via X-API-Key header. I produktion erstattes med OAuth2/Azure AD.
 """
 from fastapi import Security, HTTPException, status
 from fastapi.security import APIKeyHeader
