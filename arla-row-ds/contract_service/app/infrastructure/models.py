@@ -46,7 +46,6 @@ class ContractModel(Base):
         cascade="all, delete-orphan"
     )
 
-
 class ContractLineModel(Base):
     __tablename__ = "contract_lines"
 
@@ -57,3 +56,4 @@ class ContractLineModel(Base):
     product_code: Mapped[str] = mapped_column(String, nullable=False)
     agreed_unit_price: Mapped[float] = mapped_column(Float, nullable=False)
     currency: Mapped[str] = mapped_column(String(3), nullable=False)
+    allowed_unit: Mapped[str] = mapped_column(String, nullable=False, default="units")
