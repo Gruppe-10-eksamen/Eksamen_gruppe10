@@ -1,18 +1,6 @@
-"""
-Anti-Corruption Layer (ACL): ContractClient
-
-Dette er ACL'et mellem Order Context og Contract Context. Order Service taler
-ALDRIG direkte til Contract Service's interne model — den går gennem dette lag,
-som oversætter Contract Service's svar til noget Order-domænet forstår.
-
-Fordelen: ændrer Contract Service sit format, skal vi kun rette dette ene sted.
-Order-domænet forbliver uberørt. Det er præcis det context map'et i rapporten
-beskriver som en ACL-relation.
-"""
+"""ACL: ContractClient. Oversætter Contract Service's svar til Order-domænets sprog."""
 import logging
-
 import httpx
-
 from app.config import settings
 
 logger = logging.getLogger("order-service.acl")
@@ -21,10 +9,11 @@ logger = logging.getLogger("order-service.acl")
 class ProductCheckResult:
     """Domæne-venligt resultat — ikke Contract Service's rå JSON."""
     def __init__(self, is_allowed: bool, unit_price: float | None,
-                 minimum_order_quantity: int):
+                 minimum_order_quantity: int, allowed_unit: str = "units"):
         self.is_allowed = is_allowed
         self.unit_price = unit_price
         self.minimum_order_quantity = minimum_order_quantity
+        self.allowed_unit = allowed_unit
 
 
 class ContractClient:
@@ -42,7 +31,6 @@ class ContractClient:
             raise ContractServiceUnavailable() from exc
 
         if resp.status_code == 404:
-            # Ingen aftale -> produktet er ikke tilladt
             return ProductCheckResult(False, None, 0)
         resp.raise_for_status()
 
@@ -51,9 +39,10 @@ class ContractClient:
             is_allowed=data["is_allowed"],
             unit_price=data["unit_price"],
             minimum_order_quantity=data["minimum_order_quantity"],
+            allowed_unit=data.get("allowed_unit", "units"),
         )
 
 
 class ContractServiceUnavailable(Exception):
-    """Rejses når Contract Service ikke kan nås — bruges til fejlhåndtering."""
+    """Rejses når Contract Service ikke kan nås."""
     pass

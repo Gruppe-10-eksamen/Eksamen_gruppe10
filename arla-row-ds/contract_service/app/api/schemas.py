@@ -9,6 +9,7 @@ class ContractLineOut(BaseModel):
     product_code: str
     agreed_unit_price: float
     currency: str
+    allowed_unit: str = "units"
 
 
 class ContractOut(BaseModel):
@@ -30,3 +31,4 @@ class ValidationCheckOut(BaseModel):
     is_allowed: bool
     unit_price: float | None
     minimum_order_quantity: int
+    allowed_unit: str = "units"

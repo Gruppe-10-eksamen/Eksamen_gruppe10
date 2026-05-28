@@ -51,6 +51,7 @@ def check_product(distributor_id: str, product_code: str,
         is_allowed=allowed,
         unit_price=contract.price_for(product_code) if allowed else None,
         minimum_order_quantity=contract.terms.minimum_order_quantity,
+        allowed_unit=contract.allowed_unit_for(product_code) if allowed else "units",
     )
 
 
@@ -69,6 +70,7 @@ def _to_out(contract) -> ContractOut:
                 product_code=cl.product_code,
                 agreed_unit_price=cl.agreed_unit_price,
                 currency=cl.currency,
+                allowed_unit=cl.allowed_unit
             )
             for cl in contract.contract_lines
         ],

@@ -1,6 +1,4 @@
-"""
-Seed-script: indsætter testdata (distributøraftaler) til lokal udvikling. Kør: python -m app.seed
-"""
+"""Seed-script: indsætter testdata (distributøraftaler) til lokal udvikling. Kør: python -m app.seed"""
 import logging
 from datetime import date
 
@@ -21,7 +19,7 @@ def run():
             logger.info("Data findes allerede — springer seeding over.")
             return
 
-        # Distributør 1 — MENA (Puck-marked)
+        # ── Distributør 1 — MENA (Gulf Dairy Trading LLC) ────────────────
         d1 = DistributorModel(
             distributor_id="DIST-001", name="Gulf Dairy Trading LLC",
             region="MENA", currency="AED", is_active=True,
@@ -32,12 +30,24 @@ def run():
             valid_from=date(2025, 1, 1), valid_to=date(2026, 12, 31),
             pricing_tier="STRATEGIC", discount_percentage=0.15,
         )
-        l1 = ContractLineModel(contract_line_id="CL-001", contract_id="CON-001",
-                              product_code="PUCK-CHEESE-200G", agreed_unit_price=12.0, currency="AED")
-        l2 = ContractLineModel(contract_line_id="CL-002", contract_id="CON-001",
-                              product_code="ARLA-MILK-1L", agreed_unit_price=6.5, currency="AED")
+        # DIST-001 kan bestille alle tre produkter
+        cl1 = ContractLineModel(
+            contract_line_id="CL-001", contract_id="CON-001",
+            product_code="ARLA-MILK-1L",
+            agreed_unit_price=6.5, currency="AED", allowed_unit="liters",
+        )
+        cl2 = ContractLineModel(
+            contract_line_id="CL-002", contract_id="CON-001",
+            product_code="ARLA-BUTTER-250G",
+            agreed_unit_price=4.0, currency="AED", allowed_unit="grams",
+        )
+        cl3 = ContractLineModel(
+            contract_line_id="CL-003", contract_id="CON-001",
+            product_code="PUCK-CHEESE-200G",
+            agreed_unit_price=12.0, currency="AED", allowed_unit="grams",
+        )
 
-        # Distributør 2 — LATAM
+        # ── Distributør 2 — LATAM (Distribuidora Láctea SA) ──────────────
         d2 = DistributorModel(
             distributor_id="DIST-002", name="Distribuidora Láctea SA",
             region="LATAM", currency="USD", is_active=True,
@@ -45,15 +55,29 @@ def run():
         c2 = ContractModel(
             contract_id="CON-002", distributor_id="DIST-002",
             payment_days=45, minimum_order_quantity=100,
-            valid_from=date(2025, 6, 1), valid_to=date(2026, 6, 1),
+            valid_from=date(2025, 6, 1), valid_to=date(2026, 12, 31),
             pricing_tier="VOLUME", discount_percentage=0.08,
         )
-        l3 = ContractLineModel(contract_line_id="CL-003", contract_id="CON-002",
-                              product_code="ARLA-BUTTER-250G", agreed_unit_price=3.2, currency="USD")
+        # DIST-002 kan bestille alle tre produkter
+        cl4 = ContractLineModel(
+            contract_line_id="CL-004", contract_id="CON-002",
+            product_code="ARLA-MILK-1L",
+            agreed_unit_price=3.2, currency="USD", allowed_unit="liters",
+        )
+        cl5 = ContractLineModel(
+            contract_line_id="CL-005", contract_id="CON-002",
+            product_code="ARLA-BUTTER-250G",
+            agreed_unit_price=2.1, currency="USD", allowed_unit="grams",
+        )
+        cl6 = ContractLineModel(
+            contract_line_id="CL-006", contract_id="CON-002",
+            product_code="PUCK-CHEESE-200G",
+            agreed_unit_price=7.5, currency="USD", allowed_unit="grams",
+        )
 
-        db.add_all([d1, d2, c1, c2, l1, l2, l3])
+        db.add_all([d1, d2, c1, c2, cl1, cl2, cl3, cl4, cl5, cl6])
         db.commit()
-        logger.info("Seed gennemført: 2 distributører, 2 aftaler, 3 linjer.")
+        logger.info("Seed gennemført: 2 distributører, 2 aftaler, 6 linjer.")
     finally:
         db.close()
 

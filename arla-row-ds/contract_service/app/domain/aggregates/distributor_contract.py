@@ -1,6 +1,4 @@
-"""
-Aggregate Root: DistributorContract. Konsistensgrænse for distributøraftaler med tilhørende linjer, vilkår og priser.
-"""
+"""Aggregate Root: DistributorContract. Konsistensgrænse for distributøraftaler med tilhørende linjer, vilkår og priser."""
 from dataclasses import dataclass, field
 from datetime import date
 
@@ -10,7 +8,7 @@ from app.domain.value_objects import ContractTerms, PricingTier
 
 @dataclass
 class DistributorContract:
-    contract_id: str            # aggregatets identitet
+    contract_id: str
     distributor: Distributor
     terms: ContractTerms
     pricing_tier: PricingTier
@@ -37,5 +35,12 @@ class DistributorContract:
         return None
 
     def is_valid_on(self, on_date: date) -> bool:
-        """Forretningsregel: er aftalen aktiv på ordredatoen?"""
+        """Er aftalen aktiv på ordredatoen?"""
         return self.terms.is_active(on_date) and self.distributor.is_active
+
+    def allowed_unit_for(self, product_code: str) -> str:
+        """Returnerer tilladt enhed for produktet, eller 'units' hvis ikke fundet."""
+        for cl in self.contract_lines:
+            if cl.product_code == product_code:
+                return cl.allowed_unit
+        return "units"

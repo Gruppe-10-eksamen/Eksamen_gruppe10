@@ -1,19 +1,12 @@
-"""
-Forecast endpoint — eksponerer analytics domain service.
-
-GET /forecast/{distributor_id}
-    Henter distributørens historiske ordrer fra databasen og kører
-    DemandForecastService for at producere deskriptiv, diagnostisk og
-    predictiv indsigt.
-"""
+"""Forecast endpoint — eksponerer analytics domain service."""
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.auth import require_api_key
-from app.domain.services.demand_forecast_service import DemandForecastService
+from app.domain.services.demand_forecast_service import DemandForecastService, ProductForecast
 from app.infrastructure.repositories import OrderRepository
-from app.api.schemas import ForecastOut
+from app.api.schemas import ForecastOut, ProductForecastOut
 
 router = APIRouter(prefix="/forecast", tags=["analytics"])
 
@@ -36,4 +29,12 @@ def forecast(distributor_id: str, db: Session = Depends(get_db), _=Depends(requi
         total_historical_quantity=result.total_historical_quantity,
         rejection_rate=result.rejection_rate,
         forecast_next_period=result.forecast_next_period,
+        products=[
+            ProductForecastOut(
+                product_code=p.product_code,
+                total_historical_quantity=p.total_historical_quantity,
+                forecast_next_period=p.forecast_next_period,
+            )
+            for p in result.products
+        ],
     )

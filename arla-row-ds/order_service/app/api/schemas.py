@@ -13,7 +13,7 @@ class OrderLineIn(BaseModel):
 class OrderIn(BaseModel):
     """Indgående ordre — dette er en 'IncomingOrder' før validering."""
     distributor_id: str
-    channel: str = Field(description="EMAIL, WHATSAPP, TEAMS, EXCEL eller API")
+    channel: str = Field(description="EMAIL, WHATSAPP, TEAMS, SMS eller API")
     order_date: date
     lines: list[OrderLineIn]
 
@@ -38,9 +38,16 @@ class OrderOut(BaseModel):
     lines: list[OrderLineOut]
 
 
+class ProductForecastOut(BaseModel):
+    product_code: str
+    total_historical_quantity: int
+    forecast_next_period: float
+
+
 class ForecastOut(BaseModel):
     distributor_id: str
     historical_periods: int
     total_historical_quantity: int
     rejection_rate: float
     forecast_next_period: float
+    products: list[ProductForecastOut] = []
