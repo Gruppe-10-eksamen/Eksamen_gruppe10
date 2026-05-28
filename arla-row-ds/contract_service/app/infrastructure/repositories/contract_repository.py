@@ -76,6 +76,7 @@ class ContractRepository:
                     product_code=line.product_code,
                     agreed_unit_price=line.agreed_unit_price,
                     currency=line.currency,
+                    allowed_unit=line.allowed_unit,
                 )
             )
         return contract
