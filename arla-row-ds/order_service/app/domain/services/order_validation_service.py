@@ -4,7 +4,6 @@ Validerer en ordre mod distributøraftalen via ContractClient (ACL).
 Kalder order.validate() eller order.reject() baseret på valideringsresultatet.
 """
 import logging
-
 from app.domain.aggregates import Order
 from app.infrastructure.acl import ContractClient, ContractServiceUnavailable
 
@@ -18,9 +17,9 @@ class OrderValidationService:
     def validate(self, order: Order) -> Order:
         """
         Validér ordren mod distributøraftalen. Reglerne:
-          1. Hver ordrelinjes produkt skal være tilladt i aftalen
-          2. Den samlede mængde skal opfylde minimumsmængden
-        Ved succes: order.validate(priser). Ved fejl: order.reject(årsag).
+          1. Produkt skal være tilladt i aftalen
+          2. Samlet mængde skal opfylde minimumskravet
+          3. Enhed på ordrelinjen skal matche aftalens allowed_unit
         """
         priced_lines: dict[str, float] = {}
         min_quantity = 0
@@ -31,13 +30,27 @@ class OrderValidationService:
                     order.distributor_id, line.product_code
                 )
             except ContractServiceUnavailable:
-                # Fejlhåndtering: kan vi ikke validere, afviser vi ikke —
-                # vi lader fejlen boble op så API'et kan returnere 503.
                 logger.error("Validering afbrudt: Contract Service utilgængelig")
                 raise
 
+            # Regel 1: ingen kontrakt / produkt ikke tilladt
             if not check.is_allowed:
-                reason = f"Produkt {line.product_code} er ikke tilladt i aftalen"
+                reason = (
+                    f"Ingen aktiv kontrakt fundet for distributør "
+                    f"{order.distributor_id} — produkt {line.product_code} "
+                    f"er ikke tilladt i aftalen"
+                )
+                logger.info("Ordre %s afvist: %s", order.order_id, reason)
+                order.reject(reason)
+                return order
+
+            # Regel 3: enhed skal matche aftalens allowed_unit
+            if line.quantity.unit != check.allowed_unit:
+                reason = (
+                    f"Forkert enhed for {line.product_code}: "
+                    f"ordre bruger '{line.quantity.unit}', "
+                    f"aftalen kræver '{check.allowed_unit}'"
+                )
                 logger.info("Ordre %s afvist: %s", order.order_id, reason)
                 order.reject(reason)
                 return order
