@@ -1,7 +1,5 @@
 """
-Konfiguration læses fra environment variables (12-factor app-princippet).
-Aldrig hardcode hemmeligheder i koden — de kommer fra .env lokalt og fra
-GitHub Secrets / cloud-miljøet i produktion.
+Konfiguration fra environment variables. Secrets injiceres via .env lokalt og GitHub Secrets i produktion.
 """
 import os
 

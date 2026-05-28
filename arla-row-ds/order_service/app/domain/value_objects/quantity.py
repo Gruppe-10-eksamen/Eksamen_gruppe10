@@ -1,9 +1,5 @@
 """
-Value Object: Quantity
-
-Den ønskede mængde af en ordrelinje. Indkapsler validering: en mængde kan
-ikke være nul eller negativ. Dette er et klassisk eksempel på værdien af
-value objects — reglen håndhæves ét sted og kan ikke omgås.
+Value Object: Quantity. Mængde på en ordrelinje — skal være positiv.
 """
 from dataclasses import dataclass
 

@@ -1,9 +1,5 @@
 """
-Value Object: ContractTerms
-
-De overordnede vilkår i en distributøraftale: betalingsbetingelser,
-minimumsmængder og gyldighedsperiode. Disse vilkår bruges af Order Service
-til at validere om en ordre er i overensstemmelse med aftalen.
+Value Object: ContractTerms. Betalingsbetingelser og minimumsmængder for en distributøraftale.
 """
 from dataclasses import dataclass
 from datetime import date

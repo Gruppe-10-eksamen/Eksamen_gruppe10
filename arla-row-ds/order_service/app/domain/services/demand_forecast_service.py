@@ -1,22 +1,7 @@
 """
-Domain Service: DemandForecastService  (ANALYTICS som domain service)
-
-Dette er opgavens krav om "data analytics implementeret som domain service".
-Servicen forudsiger fremtidig efterspørgsel per marked/distributør baseret på
-historiske ordredata.
-
-Den demonstrerer de fire analyse-typer fra opgaven:
-  - Deskriptiv:   historisk total mængde per distributør
-  - Diagnostisk:  fejlrate (andel afviste ordrer)
-  - Predictiv:    lineær regression der forecaster næste periodes mængde
-  - (ML):         scikit-learn LinearRegression
-
-Servicen ligger i domænelaget fordi den opererer på domænedata (ordrer) og
-producerer domænerelevant indsigt. Den modtager historiske ordrer som input —
-hvor de kommer fra (database) er infrastrukturens ansvar, ikke domænets.
-
-Modellen er bevidst simpel. Pointen er at DEMONSTRERE konceptet med en ægte
-ML-model, ikke at bygge en produktionsklar forecasting-motor.
+Domain Service: DemandForecastService.
+Forecaster fremtidig efterspørgsel per distributør via lineær regression (scikit-learn).
+Dækker deskriptiv, diagnostisk og predictiv analyse på historiske ordredata.
 """
 from collections import defaultdict
 from dataclasses import dataclass

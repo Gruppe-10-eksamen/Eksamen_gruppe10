@@ -1,8 +1,5 @@
 """
-Struktureret logning. Logger hændelser i et ensartet format, så de kan
-opsamles og analyseres i drift (et af de driftsmæssige krav i opgaven).
-Hver vigtig hændelse — ordre modtaget, valideret, afvist, sendt til SAP —
-logges eksplicit.
+Struktureret logning til stdout. Logger ordreflow-hændelser på INFO-niveau.
 """
 import logging
 import sys

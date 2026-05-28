@@ -1,9 +1,5 @@
 """
-Domain Event: OrderReceived
-
-Domain events repræsenterer noget vigtigt der ER SKET i domænet (datid).
-OrderReceived udløses når en IncomingOrder registreres. Events muliggør løs
-kobling: andre dele af systemet kan reagere uden at ordrelogikken kender til dem.
+Domain Event: OrderReceived. Udløses når en IncomingOrder registreres
 """
 from dataclasses import dataclass
 from datetime import datetime

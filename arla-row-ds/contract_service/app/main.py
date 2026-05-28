@@ -1,8 +1,5 @@
 """
 Contract Service — FastAPI entrypoint.
-
-Ved opstart oprettes databasetabellerne (til MVP-formål; i produktion ville man
-bruge migrationsværktøjet Alembic). /health bruges til overvågning.
 """
 import logging
 

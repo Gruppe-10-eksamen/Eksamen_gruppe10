@@ -1,12 +1,5 @@
 """
-Value Object: MarketRegion
-
-Et value object er identitetsløst og uforanderligt (immutable). Det beskriver
-en egenskab, ikke en ting med livscyklus. MarketRegion repræsenterer den
-geografiske og regulatoriske markedskategori en distributør opererer i.
-
-Vi bruger `frozen=True` for at gøre objektet uforanderligt — to MarketRegion
-med samme værdi er per definition ens (value equality, ikke identity equality).
+Value Object: MarketRegion. Geografisk og regulatorisk markedskategori for en distributør.
 """
 from dataclasses import dataclass
 from enum import Enum

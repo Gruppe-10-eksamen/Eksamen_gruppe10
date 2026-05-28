@@ -4,13 +4,21 @@
   "schemaVersion": 36,
   "version": 2,
   "refresh": "10s",
-  "time": { "from": "now-15m", "to": "now" },
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
   "panels": [
     {
       "id": 1,
       "title": "HTTP requests per sekund (alle endpoints)",
       "type": "timeseries",
-      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
       "datasource": "Prometheus",
       "targets": [
         {
@@ -23,7 +31,12 @@
       "id": 2,
       "title": "HTTP request latency p95 (sekunder)",
       "type": "timeseries",
-      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
       "datasource": "Prometheus",
       "targets": [
         {
@@ -36,7 +49,12 @@
       "id": 3,
       "title": "POST /orders — requests total",
       "type": "stat",
-      "gridPos": { "x": 0, "y": 8, "w": 6, "h": 4 },
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 6,
+        "h": 4
+      },
       "datasource": "Prometheus",
       "targets": [
         {
@@ -44,17 +62,25 @@
           "legendFormat": "Ordrer modtaget"
         }
       ],
-      "options": { "colorMode": "background", "graphMode": "none" }
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none"
+      }
     },
     {
       "id": 4,
       "title": "POST /orders — 2xx (success)",
       "type": "stat",
-      "gridPos": { "x": 6, "y": 8, "w": 6, "h": 4 },
+      "gridPos": {
+        "x": 6,
+        "y": 8,
+        "w": 6,
+        "h": 4
+      },
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "sum(http_requests_total{handler=\"/orders\", method=\"POST\", status_code=~\"2..\"})",
+          "expr": "sum(http_requests_total{handler=\"/orders\", method=\"POST\", status=~\"2..\"})",
           "legendFormat": "Valideret / oprettet"
         }
       ],
@@ -63,7 +89,10 @@
         "graphMode": "none",
         "thresholds": {
           "steps": [
-            { "color": "green", "value": null }
+            {
+              "color": "green",
+              "value": null
+            }
           ]
         }
       }
@@ -72,11 +101,16 @@
       "id": 5,
       "title": "POST /orders — 4xx (afvist)",
       "type": "stat",
-      "gridPos": { "x": 12, "y": 8, "w": 6, "h": 4 },
+      "gridPos": {
+        "x": 12,
+        "y": 8,
+        "w": 6,
+        "h": 4
+      },
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "sum(http_requests_total{handler=\"/orders\", method=\"POST\", status_code=~\"4..\"})",
+          "expr": "sum(http_requests_total{handler=\"/orders\", method=\"POST\", status=~\"4..\"})",
           "legendFormat": "Afvist"
         }
       ],
@@ -85,9 +119,18 @@
         "graphMode": "none",
         "thresholds": {
           "steps": [
-            { "color": "green", "value": null },
-            { "color": "orange", "value": 5 },
-            { "color": "red", "value": 20 }
+            {
+              "color": "green",
+              "value": null
+            },
+            {
+              "color": "orange",
+              "value": 5
+            },
+            {
+              "color": "red",
+              "value": 20
+            }
           ]
         }
       }
@@ -96,7 +139,12 @@
       "id": 6,
       "title": "GET /contracts — requests total",
       "type": "stat",
-      "gridPos": { "x": 18, "y": 8, "w": 6, "h": 4 },
+      "gridPos": {
+        "x": 18,
+        "y": 8,
+        "w": 6,
+        "h": 4
+      },
       "datasource": "Prometheus",
       "targets": [
         {
@@ -104,21 +152,29 @@
           "legendFormat": "Contract lookups"
         }
       ],
-      "options": { "colorMode": "background", "graphMode": "none" }
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none"
+      }
     },
     {
       "id": 7,
       "title": "Ordreflow over tid — POST /orders (2xx vs 4xx)",
       "type": "timeseries",
-      "gridPos": { "x": 0, "y": 12, "w": 24, "h": 8 },
+      "gridPos": {
+        "x": 0,
+        "y": 12,
+        "w": 24,
+        "h": 8
+      },
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "rate(http_requests_total{handler=\"/orders\", method=\"POST\", status_code=~\"2..\"}[1m])",
+          "expr": "rate(http_requests_total{handler=\"/orders\", method=\"POST\", status=~\"2..\"}[1m])",
           "legendFormat": "Oprettet (2xx)/sek"
         },
         {
-          "expr": "rate(http_requests_total{handler=\"/orders\", method=\"POST\", status_code=~\"4..\"}[1m])",
+          "expr": "rate(http_requests_total{handler=\"/orders\", method=\"POST\", status=~\"4..\"}[1m])",
           "legendFormat": "Afvist (4xx)/sek"
         },
         {
@@ -131,7 +187,12 @@
       "id": 8,
       "title": "Requests fordelt på endpoints (pie)",
       "type": "piechart",
-      "gridPos": { "x": 0, "y": 20, "w": 12, "h": 8 },
+      "gridPos": {
+        "x": 0,
+        "y": 20,
+        "w": 12,
+        "h": 8
+      },
       "datasource": "Prometheus",
       "targets": [
         {
@@ -144,11 +205,16 @@
       "id": 9,
       "title": "HTTP fejlrate (4xx + 5xx) per endpoint",
       "type": "timeseries",
-      "gridPos": { "x": 12, "y": 20, "w": 12, "h": 8 },
+      "gridPos": {
+        "x": 12,
+        "y": 20,
+        "w": 12,
+        "h": 8
+      },
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "rate(http_requests_total{status_code=~\"4..|5..\"}[1m])",
+          "expr": "rate(http_requests_total{status=~\"4..|5..\"}[1m])",
           "legendFormat": "{{status_code}} {{handler}}"
         }
       ]
@@ -157,7 +223,12 @@
       "id": 10,
       "title": "PostgreSQL — aktive forbindelser",
       "type": "timeseries",
-      "gridPos": { "x": 0, "y": 28, "w": 12, "h": 8 },
+      "gridPos": {
+        "x": 0,
+        "y": 28,
+        "w": 12,
+        "h": 8
+      },
       "datasource": "Prometheus",
       "targets": [
         {
@@ -170,7 +241,12 @@
       "id": 11,
       "title": "PostgreSQL — inserts per sekund",
       "type": "timeseries",
-      "gridPos": { "x": 12, "y": 28, "w": 12, "h": 8 },
+      "gridPos": {
+        "x": 12,
+        "y": 28,
+        "w": 12,
+        "h": 8
+      },
       "datasource": "Prometheus",
       "targets": [
         {

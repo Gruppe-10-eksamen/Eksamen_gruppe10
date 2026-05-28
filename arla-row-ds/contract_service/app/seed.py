@@ -1,8 +1,5 @@
 """
-Seed-script: indsætter et par distributøraftaler så der er noget at validere
-ordrer imod. Kør med:  python -m app.seed
-
-I kan frit udvide eller erstatte disse med jeres egne testdata.
+Seed-script: indsætter testdata (distributøraftaler) til lokal udvikling. Kør: python -m app.seed
 """
 import logging
 from datetime import date

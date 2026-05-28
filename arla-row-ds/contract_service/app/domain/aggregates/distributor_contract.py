@@ -1,20 +1,5 @@
 """
-Aggregate Root: DistributorContract
-
-Et aggregat er en konsistensgrænse i domænemodellen — en gruppe objekter der
-behandles som én enhed. Aggregate root er den ENESTE indgang til aggregatet:
-al adgang til de underliggende entiteter (Distributor, ContractLine) sker
-gennem roden. Det sikrer at forretningsreglerne altid håndhæves.
-
-DistributorContract samler:
-  - én Distributor (entity)
-  - en eller flere ContractLines (entities)
-  - ContractTerms (value object)
-  - PricingTier (value object)
-
-Eksempel på hvorfor aggregate root er vigtig: man kan ikke tilføje en
-ContractLine udenom roden — det sker via add_contract_line(), så vi kan
-håndhæve regler (fx ingen dubletter af produktkoder).
+Aggregate Root: DistributorContract. Konsistensgrænse for distributøraftaler med tilhørende linjer, vilkår og priser.
 """
 from dataclasses import dataclass, field
 from datetime import date

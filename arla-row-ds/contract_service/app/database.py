@@ -1,7 +1,5 @@
 """
-SQLAlchemy database-opsætning. Vi bruger 2.0-style med en declarative base.
-get_db() er en FastAPI-dependency der giver en session per request og lukker
-den korrekt bagefter.
+SQLAlchemy database-opsætning. get_db() giver én session per request og lukker den bagefter.
 """
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase

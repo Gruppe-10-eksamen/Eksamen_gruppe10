@@ -1,16 +1,6 @@
 """
-Aggregate Root: Order
-
-Order er det centrale aggregat i løsningen. Det indkapsler en hel ordre med
-dens linjer og håndhæver forretningsreglerne for ordrens livscyklus.
-
-Central designbeslutning fra rapporten: en ordre starter som RECEIVED (en
-IncomingOrder) og bliver først en gyldig Order når den er VALIDATED. Overgangen
-sker via metoderne validate() og reject() — man kan ikke bare sætte status
-direkte udefra, hvilket beskytter aggregatets konsistens.
-
-OrderLine er en entity inde i aggregatet. Den tilgås kun gennem Order
-(aggregate root) — aldrig direkte.
+Aggregate Root: Order.
+Håndhæver ordrens livscyklus: RECEIVED → VALIDATED/REJECTED → FORWARDED_TO_SAP.
 """
 from dataclasses import dataclass, field
 from datetime import datetime, date
